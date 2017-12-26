@@ -243,13 +243,9 @@ install -m 644 rules/60-evdev.hwdb %{buildroot}%{_prefix}/lib/udev/hwdb.d/
 
 # fstab
 mkdir -p %{buildroot}%{_sysconfdir}
-install -m 644 etc/fstab %{buildroot}%{_sysconfdir}
-# ugly temporary patch for initrd wearable
-install -m 644 etc/fstab_initrd %{buildroot}%{_sysconfdir}
+install -m 644 etc/fstab_3parts %{buildroot}%{_sysconfdir}
 # lazymnt
-install -m 644 etc/fstab_lazymnt %{buildroot}%{_sysconfdir}
-install -m 644 etc/fstab_initrd_lazymnt %{buildroot}%{_sysconfdir}
-install -m 644 etc/fstab_2part %{buildroot}%{_sysconfdir}
+install -m 644 etc/fstab_2parts %{buildroot}%{_sysconfdir}
 %if %{temp_wait_mount}
 mkdir -p %{buildroot}%{_unitdir_user}/basic.target.wants
 install -m 644 units/wait-user-mount.service %{buildroot}%{_unitdir_user}
@@ -305,11 +301,12 @@ systemctl daemon-reload
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab
+%{_sysconfdir}/fstab_3parts
 %{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 
 %post u3
 %{_prefix}/bin/udevadm hwdb --update
+mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
 %files rpi3
 %manifest %{name}.manifest
@@ -317,11 +314,12 @@ systemctl daemon-reload
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab
+%{_sysconfdir}/fstab_3parts
 %{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 
 %post rpi3
 %{_prefix}/bin/udevadm hwdb --update
+mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
 %files iot
 %manifest %{name}.manifest
@@ -329,13 +327,12 @@ systemctl daemon-reload
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab_2part
+%{_sysconfdir}/fstab_2parts
 %{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 
 %post iot
 %{_prefix}/bin/udevadm hwdb --update
-rm %{_sysconfdir}/fstab
-mv %{_sysconfdir}/fstab_2part %{_sysconfdir}/fstab
+mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 
 %posttrans iot
 # platform/upstream/dbus
@@ -353,7 +350,7 @@ rm -f %{_sbindir}/e4crypt
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab_lazymnt
+%{_sysconfdir}/fstab_2parts
 %{_unitdir}/graphical.target.wants/tizen-fstrim-user.timer
 %{_unitdir}/tizen-fstrim-user.timer
 %{_unitdir}/tizen-fstrim-user.service
@@ -369,7 +366,7 @@ rm -f %{_sbindir}/e4crypt
 %license LICENSE.Apache-2.0
 /initrd
 /csa
-%{_sysconfdir}/fstab_initrd
+%{_sysconfdir}/fstab_3parts
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-user.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-rootfs.service
@@ -378,15 +375,12 @@ rm -f %{_sbindir}/e4crypt
 
 # ugly temporary patch for initrd wearable
 %post circle
-rm %{_sysconfdir}/fstab
-mv %{_sysconfdir}/fstab_initrd %{_sysconfdir}/fstab
+mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 # fstab for tm1
 %post spreadtrum
-rm %{_sysconfdir}/fstab
-mv %{_sysconfdir}/fstab_initrd_lazymnt %{_sysconfdir}/fstab
+mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %post n4
-rm %{_sysconfdir}/fstab
-mv %{_sysconfdir}/fstab_lazymnt %{_sysconfdir}/fstab
+mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 
 %files spreadtrum
 %manifest %{name}.manifest
@@ -395,7 +389,7 @@ mv %{_sysconfdir}/fstab_lazymnt %{_sysconfdir}/fstab
 /csa
 %{_prefix}/lib/udev/rules.d/51-system-plugin-spreadtrum.rules
 %{_unitdir}/tizen-system-env.service
-%{_sysconfdir}/fstab_initrd_lazymnt
+%{_sysconfdir}/fstab_2parts
 %{_unitdir}/basic.target.wants/tizen-system-env.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-user.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-system\x2ddata.service
@@ -473,11 +467,12 @@ ln -s /sbin/init.wrapper /sbin/init
 #%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 #%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 #%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-#%{_sysconfdir}/fstab
+#%{_sysconfdir}/fstab_3parts
 #%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 
 %post device-rpi3
 #%{_prefix}/bin/udevadm hwdb --update
+#mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
 %files profile-iot
 #%manifest %{name}.manifest
@@ -485,13 +480,12 @@ ln -s /sbin/init.wrapper /sbin/init
 #%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 #%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 #%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-#%{_sysconfdir}/fstab_2part
+#%{_sysconfdir}/fstab_2parts
 #%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 
 %post profile-iot
 #%{_prefix}/bin/udevadm hwdb --update
-#rm %{_sysconfdir}/fstab
-#mv %{_sysconfdir}/fstab_2part %{_sysconfdir}/fstab
+#mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 
 %posttrans profile-iot
 ## platform/upstream/dbus
