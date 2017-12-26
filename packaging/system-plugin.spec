@@ -7,7 +7,7 @@ Name:      system-plugin
 Summary:   Target specific system configuration files
 Version:   0.1
 Release:   1
-Group: Base/Startup
+Group:     Base/Startup
 License:   Apache-2.0
 Source0:   %{name}-%{version}.tar.bz2
 Source1:   %{name}.manifest
@@ -111,14 +111,6 @@ BuildArch: noarch
 
 %description init_wrapper
 This package provides init.wrapper and init symlink file for init wrapper booting.
-
-%package headless
-Summary: Support headless device.
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description headless
-This package provides the functions for headless device.
 
 ###################################################################
 ###################### Newly-created RPMs #########################
@@ -446,12 +438,6 @@ systemctl daemon-reload
 %posttrans init_wrapper
 rm -f /sbin/init
 ln -s /sbin/init.wrapper /sbin/init
-
-%files headless
-%license LICENSE.Apache-2.0
-%{_bindir}/sdb-mode.sh
-%{_prefix}/lib/udev/rules.d/99-sdb-switch.rules
-%{_sysconfdir}/profile.d/headless_env.sh
 
 ###################################################################
 ###################### Newly-created RPMs #########################
