@@ -104,14 +104,6 @@ BuildArch: noarch
 %description profile_ivi
 This package provides ivi specific system configuration files.
 
-%package init_wrapper
-Summary: Support init.wrapper booting.
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description init_wrapper
-This package provides init.wrapper and init symlink file for init wrapper booting.
-
 ###################################################################
 ###################### Newly-created RPMs #########################
 ###################################################################
@@ -164,6 +156,14 @@ BuildArch: noarch
 
 %description config-udev-sdbd
 This package provides configuration files to trigger sdb with udev rule.
+
+%package feature-init_wrapper
+Summary: Support init.wrapper booting.
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description feature-init_wrapper
+This package provides init.wrapper and init symlink file for init wrapper booting.
 
 %package feature-liblazymount
 Summary: Library for lazy mount feature
@@ -431,14 +431,6 @@ systemctl daemon-reload
 %{_prefix}/lib/udev/rules.d/99-usb-ethernet.rules
 %{_bindir}/usb_net_init.sh
 
-%files init_wrapper
-%license LICENSE.Apache-2.0
-%{_sbindir}/init.wrapper
-
-%posttrans init_wrapper
-rm -f /sbin/init
-ln -s /sbin/init.wrapper /sbin/init
-
 ###################################################################
 ###################### Newly-created RPMs #########################
 ###################################################################
@@ -493,6 +485,14 @@ ln -s /sbin/init.wrapper /sbin/init
 %license LICENSE.Apache-2.0
 %{_bindir}/sdb-mode.sh
 %{_prefix}/lib/udev/rules.d/99-sdb-extcon.rules
+
+%files feature-init_wrapper
+%license LICENSE.Apache-2.0
+%{_sbindir}/init.wrapper
+
+%posttrans feature-init_wrapper
+rm -f /sbin/init
+ln -s /sbin/init.wrapper /sbin/init
 
 %files feature-liblazymount
 #%defattr(-,root,root,-)
