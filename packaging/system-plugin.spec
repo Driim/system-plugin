@@ -64,14 +64,6 @@ BuildArch: noarch
 %description exynos
 This package provides Exynos specific system configuration files.
 
-%package spreadtrum
-Summary:  Spreadtrum specific system configuration files
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description spreadtrum
-This package provides Spreadtrum specific system configuration files.
-
 %package circle
 Summary:  Circle specific system configuration files
 Requires: %{name} = %{version}-%{release}
@@ -107,6 +99,14 @@ This package provides ivi specific system configuration files.
 ###################################################################
 ###################### Newly-created RPMs #########################
 ###################################################################
+
+%package device-spreadtrum
+Summary:  Spreadtrum specific system configuration files
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description device-spreadtrum
+This package provides Spreadtrum specific system configuration files.
 
 %package device-artik530
 Summary: Artik530
@@ -368,31 +368,8 @@ rm -f %{_sbindir}/e4crypt
 # ugly temporary patch for initrd wearable
 %post circle
 mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
-# fstab for tm1
-%post spreadtrum
-mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %post n4
 mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
-
-%files spreadtrum
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-/initrd
-/csa
-%{_prefix}/lib/udev/rules.d/51-system-plugin-spreadtrum.rules
-%{_unitdir}/tizen-system-env.service
-%{_sysconfdir}/fstab_2parts
-%{_unitdir}/basic.target.wants/tizen-system-env.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-rootfs.service
-%{_unitdir}/csa.mount
-%{_unitdir}/local-fs.target.wants/csa.mount
-%{_unitdir}/graphical.target.wants/tizen-fstrim-user.timer
-%{_unitdir}/tizen-fstrim-user.timer
-%{_unitdir}/tizen-fstrim-user.service
-%{_bindir}/tizen-fstrim-on-charge.sh
-%{_datadir}/fixed_multiuser/fixed-multi-user.sh
 
 %files -n liblazymount
 %defattr(-,root,root,-)
@@ -434,6 +411,29 @@ systemctl daemon-reload
 ###################################################################
 ###################### Newly-created RPMs #########################
 ###################################################################
+
+%files device-spreadtrum
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+/initrd
+/csa
+%{_prefix}/lib/udev/rules.d/51-system-plugin-spreadtrum.rules
+%{_unitdir}/tizen-system-env.service
+%{_sysconfdir}/fstab_2parts
+%{_unitdir}/basic.target.wants/tizen-system-env.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-user.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-system\x2ddata.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-rootfs.service
+%{_unitdir}/csa.mount
+%{_unitdir}/local-fs.target.wants/csa.mount
+%{_unitdir}/graphical.target.wants/tizen-fstrim-user.timer
+%{_unitdir}/tizen-fstrim-user.timer
+%{_unitdir}/tizen-fstrim-user.service
+%{_bindir}/tizen-fstrim-on-charge.sh
+%{_datadir}/fixed_multiuser/fixed-multi-user.sh
+
+%post device-spreadtrum
+mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 
 %files device-artik530
 
