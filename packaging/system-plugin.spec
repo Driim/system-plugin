@@ -88,14 +88,6 @@ Requires: liblazymount = %{version}
 %description -n liblazymount-devel
 Development library for lazy mount feature.It supports some interface functions.
 
-%package profile_ivi
-Summary: ivi specific system configuration files
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description profile_ivi
-This package provides ivi specific system configuration files.
-
 ###################################################################
 ###################### Newly-created RPMs #########################
 ###################################################################
@@ -228,7 +220,6 @@ ln -s ../tizen-system-env.service %{buildroot}%{_unitdir}/basic.target.wants/tiz
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/51-system-plugin-exynos.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/51-system-plugin-spreadtrum.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
-install -m 644 rules/99-usb-ethernet.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 
 mkdir -p %{buildroot}%{_prefix}/lib/udev/hwdb.d/
 install -m 644 rules/60-evdev.hwdb %{buildroot}%{_prefix}/lib/udev/hwdb.d/
@@ -251,9 +242,6 @@ ln -s ../tizen-fstrim-user.timer %{buildroot}%{_unitdir}/graphical.target.wants/
 install -m 644 units/tizen-fstrim-user.service %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_bindir}
 install -m 755 scripts/tizen-fstrim-on-charge.sh %{buildroot}%{_bindir}
-
-# ivi
-install -m 755 scripts/usb_net_init.sh %{buildroot}%{_bindir}
 
 # fixed-multi-user
 install -m 775 -D scripts/fixed-multi-user.sh %{buildroot}%{_datadir}/fixed_multiuser/fixed-multi-user.sh
@@ -402,11 +390,6 @@ systemctl daemon-reload
 %endif
 
 %postun -n liblazymount  -p /sbin/ldconfig
-
-%files profile_ivi
-%license LICENSE.Apache-2.0
-%{_prefix}/lib/udev/rules.d/99-usb-ethernet.rules
-%{_bindir}/usb_net_init.sh
 
 ###################################################################
 ###################### Newly-created RPMs #########################
