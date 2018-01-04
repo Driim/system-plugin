@@ -38,15 +38,6 @@ BuildArch: noarch
 %description rpi3
 This package provides RPi3 specific system configuration files.
 
-%package iot
-Summary:  IoT specific system configuration files
-Requires: %{name} = %{version}-%{release}
-Requires: dbus
-BuildArch: noarch
-
-%description iot
-This package provides IoT specific system configuration files.
-
 %package n4
 Summary:  Note4 specific system configuration files
 Requires: %{name} = %{version}-%{release}
@@ -124,15 +115,6 @@ BuildArch: noarch
 %description device-rpi3
 This package provides system configuration files for the RPI3 device.
 
-%package profile-iot
-Summary:  System configuration files for IoT profiles
-Requires: %{name} = %{version}-%{release}
-Requires: dbus
-BuildArch: noarch
-
-%description profile-iot
-This package provides system configuration files for IoT profiles.
-
 %package profile-iot-headless
 Summary:  System configuration files for IoT headless profiles
 Requires: %{name} = %{version}-%{release}
@@ -140,14 +122,6 @@ BuildArch: noarch
 
 %description profile-iot-headless
 This package provides system configuration files for IoT headless profiles.
-
-%package config-udev-sdbd
-Summary: System configuration files to trigger sdb with udev rule
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description config-udev-sdbd
-This package provides configuration files to trigger sdb with udev rule.
 
 %package feature-init_wrapper
 Summary: Support init.wrapper booting.
@@ -172,6 +146,47 @@ Requires: feature-liblazymount = %{version}
 
 %description feature-liblazymount-devel
 Development library for lazy mount feature.It supports some interface functions.
+
+%package feature-image-reduction
+Summary:  System configuration files for reducing image size
+Requires: %{name} = %{version}-%{release}
+Requires: dbus
+BuildArch: noarch
+
+%description feature-image-reduction
+This package provides system configuration files for reducing image size.
+
+%package config-udev-sdbd
+Summary: System configuration files to trigger sdb with udev rule
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description config-udev-sdbd
+This package provides configuration files to trigger sdb with udev rule.
+
+%package config-2parts
+Summary: System configuration files for storage partitions
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description config-2parts
+This package provides configuration files for /etc/fstab(remount) and resize2fs@.service.
+
+%package config-3parts
+Summary: System configuration files for storage partitions
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description config-3parts
+This package provides configuration files for /etc/fstab(remount) and resize2fs@.service.
+
+%package config-3parts-lzuser
+Summary: System configuration files for storage partitions
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description config-3parts-lzuser
+This package provides configuration files for /etc/fstab(remount) and resize2fs@.service.
 
 %prep
 %setup -q
@@ -301,29 +316,6 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 %{_prefix}/bin/udevadm hwdb --update
 mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
-%files iot
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab_2parts
-%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
-
-%post iot
-%{_prefix}/bin/udevadm hwdb --update
-mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
-
-%posttrans iot
-# platform/upstream/dbus
-rm -f %{_bindir}/dbus-cleanup-sockets
-rm -f %{_bindir}/dbus-run-session
-rm -f %{_bindir}/dbus-test-tool
-rm -f %{_bindir}/dbus-update-activation-environment
-rm -f %{_bindir}/dbus-uuidgen
-# platform/upstream/e2fsprogs
-rm -f %{_sbindir}/e4crypt
-
 %files n4
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
@@ -408,10 +400,6 @@ mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %license LICENSE.Apache-2.0
 /initrd
 /csa
-%{_sysconfdir}/fstab_3parts
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-rootfs.service
 %{_unitdir}/csa.mount
 %{_unitdir}/local-fs.target.wants/csa.mount
 
@@ -435,39 +423,10 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 #%{_prefix}/bin/udevadm hwdb --update
 #mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
-%files profile-iot
-#%manifest %{name}.manifest
-#%license LICENSE.Apache-2.0
-#%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-#%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
-#%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-#%{_sysconfdir}/fstab_2parts
-#%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
-
-%post profile-iot
-#%{_prefix}/bin/udevadm hwdb --update
-#mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
-
-%posttrans profile-iot
-## platform/upstream/dbus
-#rm -f %{_bindir}/dbus-cleanup-sockets
-#rm -f %{_bindir}/dbus-run-session
-#rm -f %{_bindir}/dbus-test-tool
-#rm -f %{_bindir}/dbus-update-activation-environment
-#rm -f %{_bindir}/dbus-uuidgen
-## platform/upstream/e2fsprogs
-#rm -f %{_sbindir}/e4crypt
-
 %files profile-iot-headless
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
 %{_sysconfdir}/profile.d/headless_env.sh
-
-%files config-udev-sdbd
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_bindir}/sdb-mode.sh
-%{_prefix}/lib/udev/rules.d/99-sdb-extcon.rules
 
 %files feature-init_wrapper
 %license LICENSE.Apache-2.0
@@ -507,4 +466,52 @@ ln -s /sbin/init.wrapper /sbin/init
 #%{_bindir}/test_lazymount
 #%endif
 
-%postun feature-liblazymount  -p /sbin/ldconfig
+%postun feature-liblazymount -p /sbin/ldconfig
+
+%posttrans feature-image-reduction
+# platform/upstream/dbus
+rm -f %{_bindir}/dbus-cleanup-sockets
+rm -f %{_bindir}/dbus-run-session
+rm -f %{_bindir}/dbus-test-tool
+rm -f %{_bindir}/dbus-update-activation-environment
+rm -f %{_bindir}/dbus-uuidgen
+# platform/upstream/e2fsprogs
+rm -f %{_sbindir}/e4crypt
+
+%files config-udev-sdbd
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_bindir}/sdb-mode.sh
+%{_prefix}/lib/udev/rules.d/99-sdb-extcon.rules
+
+%files config-2parts
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
+%{_sysconfdir}/fstab_2parts
+
+%post config-2parts
+mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
+
+%files config-3parts
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
+%{_sysconfdir}/fstab_3parts
+
+%post config-3parts
+mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
+
+%files config-3parts-lzuser
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
+%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
+%{_sysconfdir}/fstab_2parts
+
+%post config-3parts-lzuser
+mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
