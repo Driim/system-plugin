@@ -258,9 +258,6 @@ systemctl daemon-reload
 %{_unitdir}/csa.mount
 %{_unitdir}/local-fs.target.wants/csa.mount
 
-%post device-circle
-mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
-
 %files device-u3
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
