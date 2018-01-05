@@ -44,14 +44,6 @@ BuildArch: noarch
 %description device-circle
 This package provides Circle specific system configuration files.
 
-%package device-exynos
-Summary:  Exynos specific system configuration files
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description device-exynos
-This package provides Exynos specific system configuration files.
-
 %package device-u3
 Summary:  U3/XU3 specific system configuration files
 Requires: %{name} = %{version}-%{release}
@@ -280,10 +272,14 @@ mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %post device-circle
 mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
-%files device-exynos
+%files device-u3
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
+%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 %{_prefix}/lib/udev/rules.d/51-system-plugin-exynos.rules
+
+%post device-u3
+%{_prefix}/bin/udevadm hwdb --update
 
 %files device-rpi3
 %manifest %{name}.manifest
@@ -291,14 +287,6 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 %{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
 
 %post device-rpi3
-%{_prefix}/bin/udevadm hwdb --update
-
-%files device-u3
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
-
-%post device-u3
 %{_prefix}/bin/udevadm hwdb --update
 
 %files feature-init_wrapper
