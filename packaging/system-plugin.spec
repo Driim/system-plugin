@@ -1,8 +1,6 @@
 #%define _unpackaged_files_terminate_build 0
 #%define debug_package %{nil}
 
-%define temp_wait_mount 1
-
 Name:      system-plugin
 Summary:   Target specific system configuration files
 Version:   0.1
@@ -21,60 +19,6 @@ BuildRequires: pkgconfig(libsystemd)
 %description
 This package provides target specific system configuration files.
 
-%package u3
-Summary:  U3/XU3 specific system configuration files
-Requires: %{name} = %{version}-%{release}
-Requires: %{name}-exynos = %{version}-%{release}
-BuildArch: noarch
-
-%description u3
-This package provides U3/XU3 specific system configuration files.
-
-%package rpi3
-Summary:  RPi3 specific system configuration files
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description rpi3
-This package provides RPi3 specific system configuration files.
-
-%package n4
-Summary:  Note4 specific system configuration files
-Requires: %{name} = %{version}-%{release}
-Requires: %{name}-exynos = %{version}-%{release}
-BuildArch: noarch
-
-%description n4
-This package provides Note4 specific system configuration files.
-
-%package exynos
-Summary:  Exynos specific system configuration files
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description exynos
-This package provides Exynos specific system configuration files.
-
-%package -n liblazymount
-Summary: Library for lazy mount feature
-Requires(post): /usr/bin/vconftool
-Requires: vconf
-
-%description -n liblazymount
-Library for lazy mount feature. It supports some interface functions.
-
-%package -n liblazymount-devel
-Summary: Development library for lazy mount feature
-Requires: vconf
-Requires: liblazymount = %{version}
-
-%description -n liblazymount-devel
-Development library for lazy mount feature.It supports some interface functions.
-
-###################################################################
-###################### Newly-created RPMs #########################
-###################################################################
-
 %package device-spreadtrum
 Summary:  Spreadtrum specific system configuration files
 Requires: %{name} = %{version}-%{release}
@@ -82,6 +26,15 @@ BuildArch: noarch
 
 %description device-spreadtrum
 This package provides Spreadtrum specific system configuration files.
+
+%package device-n4
+Summary:  Note4 specific system configuration files
+Requires: %{name} = %{version}-%{release}
+Requires: %{name}-exynos = %{version}-%{release}
+BuildArch: noarch
+
+%description device-n4
+This package provides Note4 specific system configuration files.
 
 %package device-circle
 Summary:  Circle specific system configuration files
@@ -91,21 +44,22 @@ BuildArch: noarch
 %description device-circle
 This package provides Circle specific system configuration files.
 
-%package device-artik530
-Summary: Artik530
+%package device-exynos
+Summary:  Exynos specific system configuration files
 Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
-%description device-artik530
-This package provides system configuration files for the artik530 device.
+%description device-exynos
+This package provides Exynos specific system configuration files.
 
-%package device-artik710
-Summary: Artik710
+%package device-u3
+Summary:  U3/XU3 specific system configuration files
 Requires: %{name} = %{version}-%{release}
+Requires: %{name}-exynos = %{version}-%{release}
 BuildArch: noarch
 
-%description device-artik710
-This package provides system configuration files for the artik710 device.
+%description device-u3
+This package provides U3/XU3 specific system configuration files.
 
 %package device-rpi3
 Summary: RPI3
@@ -115,14 +69,6 @@ BuildArch: noarch
 %description device-rpi3
 This package provides system configuration files for the RPI3 device.
 
-%package profile-iot-headless
-Summary:  System configuration files for IoT headless profiles
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
-
-%description profile-iot-headless
-This package provides system configuration files for IoT headless profiles.
-
 %package feature-init_wrapper
 Summary: Support init.wrapper booting.
 Requires: %{name} = %{version}-%{release}
@@ -131,21 +77,21 @@ BuildArch: noarch
 %description feature-init_wrapper
 This package provides init.wrapper and init symlink file for init wrapper booting.
 
-%package feature-liblazymount
+%package feature-lazymount
 Summary: Library for lazy mount feature
 Requires(post): /usr/bin/vconftool
 Requires: vconf
 
-%description feature-liblazymount
+%description feature-lazymount
 Library for lazy mount feature. It supports some interface functions.
 
-%package feature-liblazymount-devel
+%package feature-lazymount-devel
 Summary: Development library for lazy mount feature
 Requires: vconf
-Requires: feature-liblazymount = %{version}
+Requires: feature-lazymount = %{version}
 
-%description feature-liblazymount-devel
-Development library for lazy mount feature.It supports some interface functions.
+%description feature-lazymount-devel
+Development library for lazy mount feature. It supports some interface functions.
 
 %package feature-image-reduction
 Summary:  System configuration files for reducing image size
@@ -155,6 +101,14 @@ BuildArch: noarch
 
 %description feature-image-reduction
 This package provides system configuration files for reducing image size.
+
+%package config-env-headless
+Summary:  System configuration files for headless images
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description config-env-headless
+This package provides system configuration files for headless images.
 
 %package config-udev-sdbd
 Summary: System configuration files to trigger sdb with udev rule
@@ -242,13 +196,7 @@ install -m 644 rules/60-evdev.hwdb %{buildroot}%{_prefix}/lib/udev/hwdb.d/
 # fstab
 mkdir -p %{buildroot}%{_sysconfdir}
 install -m 644 etc/fstab_3parts %{buildroot}%{_sysconfdir}
-# lazymnt
 install -m 644 etc/fstab_2parts %{buildroot}%{_sysconfdir}
-%if %{temp_wait_mount}
-mkdir -p %{buildroot}%{_unitdir_user}/basic.target.wants
-install -m 644 units/wait-user-mount.service %{buildroot}%{_unitdir_user}
-ln -s ../wait-user-mount.service %{buildroot}%{_unitdir_user}/basic.target.wants/wait-user-mount.service
-%endif
 
 # fstrim
 mkdir -p %{buildroot}%{_unitdir}/graphical.target.wants
@@ -290,88 +238,6 @@ systemctl daemon-reload
 %{_unitdir}/tizen-system-env.service
 %{_unitdir}/basic.target.wants/tizen-system-env.service
 
-%files u3
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab_3parts
-%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
-
-%post u3
-%{_prefix}/bin/udevadm hwdb --update
-mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
-
-%files rpi3
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab_3parts
-%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
-
-%post rpi3
-%{_prefix}/bin/udevadm hwdb --update
-mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
-
-%files n4
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_sysconfdir}/fstab_2parts
-%{_unitdir}/graphical.target.wants/tizen-fstrim-user.timer
-%{_unitdir}/tizen-fstrim-user.timer
-%{_unitdir}/tizen-fstrim-user.service
-%{_bindir}/tizen-fstrim-on-charge.sh
-
-%files exynos
-%manifest %{name}.manifest
-%license LICENSE.Apache-2.0
-%{_prefix}/lib/udev/rules.d/51-system-plugin-exynos.rules
-
-%post n4
-mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
-
-%files -n liblazymount
-%defattr(-,root,root,-)
-%{_libdir}/liblazymount.so.*
-%manifest liblazymount.manifest
-%license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/lazy_mount.path
-%{_unitdir}/lazy_mount.path
-%{_unitdir}/lazy_mount.service
-%{_bindir}/mount-user.sh
-%if %{temp_wait_mount}
-%{_bindir}/test_lazymount
-%{_unitdir_user}/basic.target.wants/wait-user-mount.service
-%{_unitdir_user}/wait-user-mount.service
-%endif
-
-%post -n liblazymount
-/sbin/ldconfig
-systemctl daemon-reload
-
-%files -n liblazymount-devel
-%defattr(-,root,root,-)
-%manifest liblazymount.manifest
-%license LICENSE.Apache-2.0
-%{_libdir}/liblazymount.so
-%{_includedir}/lazymount/lazy_mount.h
-%{_libdir}/pkgconfig/liblazymount.pc
-%if ! %{temp_wait_mount}
-%{_bindir}/test_lazymount
-%endif
-
-%postun -n liblazymount  -p /sbin/ldconfig
-
-###################################################################
-###################### Newly-created RPMs #########################
-###################################################################
-
 %files device-spreadtrum
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
@@ -395,6 +261,14 @@ systemctl daemon-reload
 %post device-spreadtrum
 mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 
+%files device-n4
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_unitdir}/graphical.target.wants/tizen-fstrim-user.timer
+%{_unitdir}/tizen-fstrim-user.timer
+%{_unitdir}/tizen-fstrim-user.service
+%{_bindir}/tizen-fstrim-on-charge.sh
+
 %files device-circle
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
@@ -406,27 +280,26 @@ mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %post device-circle
 mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 
-%files device-artik530
-
-%files device-artik710
-
-%files device-rpi3
-#%manifest %{name}.manifest
-#%license LICENSE.Apache-2.0
-#%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-#%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
-#%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-#%{_sysconfdir}/fstab_3parts
-#%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
-
-%post device-rpi3
-#%{_prefix}/bin/udevadm hwdb --update
-#mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
-
-%files profile-iot-headless
+%files device-exynos
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
-%{_sysconfdir}/profile.d/headless_env.sh
+%{_prefix}/lib/udev/rules.d/51-system-plugin-exynos.rules
+
+%files device-rpi3
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
+
+%post device-rpi3
+%{_prefix}/bin/udevadm hwdb --update
+
+%files device-u3
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_prefix}/lib/udev/hwdb.d/60-evdev.hwdb
+
+%post device-u3
+%{_prefix}/bin/udevadm hwdb --update
 
 %files feature-init_wrapper
 %license LICENSE.Apache-2.0
@@ -436,37 +309,29 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 rm -f /sbin/init
 ln -s /sbin/init.wrapper /sbin/init
 
-%files feature-liblazymount
-#%defattr(-,root,root,-)
-#%{_libdir}/liblazymount.so.*
-#%manifest liblazymount.manifest
-#%license LICENSE.Apache-2.0
-#%{_unitdir}/basic.target.wants/lazy_mount.path
-#%{_unitdir}/lazy_mount.path
-#%{_unitdir}/lazy_mount.service
-#%{_bindir}/mount-user.sh
-#%if %{temp_wait_mount}
-#%{_bindir}/test_lazymount
-#%{_unitdir_user}/basic.target.wants/wait-user-mount.service
-#%{_unitdir_user}/wait-user-mount.service
-#%endif
+%files feature-lazymount
+%defattr(-,root,root,-)
+%manifest liblazymount.manifest
+%license LICENSE.Apache-2.0
+%{_libdir}/liblazymount.so.*
+%{_unitdir}/basic.target.wants/lazy_mount.path
+%{_unitdir}/lazy_mount.path
+%{_unitdir}/lazy_mount.service
+%{_bindir}/mount-user.sh
 
-%post feature-liblazymount
-#/sbin/ldconfig
-#systemctl daemon-reload
+%post feature-lazymount
+/sbin/ldconfig
+systemctl daemon-reload
 
-%files feature-liblazymount-devel
-#%defattr(-,root,root,-)
-#%manifest liblazymount.manifest
-#%license LICENSE.Apache-2.0
-#%{_libdir}/liblazymount.so
-#%{_includedir}/lazymount/lazy_mount.h
-#%{_libdir}/pkgconfig/liblazymount.pc
-#%if ! %{temp_wait_mount}
-#%{_bindir}/test_lazymount
-#%endif
+%postun feature-lazymount -p /sbin/ldconfig
 
-%postun feature-liblazymount -p /sbin/ldconfig
+%files feature-lazymount-devel
+%defattr(-,root,root,-)
+%manifest liblazymount.manifest
+%license LICENSE.Apache-2.0
+%{_libdir}/liblazymount.so
+%{_includedir}/lazymount/lazy_mount.h
+%{_libdir}/pkgconfig/liblazymount.pc
 
 %posttrans feature-image-reduction
 # platform/upstream/dbus
@@ -477,6 +342,11 @@ rm -f %{_bindir}/dbus-update-activation-environment
 rm -f %{_bindir}/dbus-uuidgen
 # platform/upstream/e2fsprogs
 rm -f %{_sbindir}/e4crypt
+
+%files config-env-headless
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_sysconfdir}/profile.d/headless_env.sh
 
 %files config-udev-sdbd
 %manifest %{name}.manifest
