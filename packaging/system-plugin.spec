@@ -172,10 +172,6 @@ ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs
 ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dlabel-user.service
 ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dlabel-rootfs.service
 
-ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dpartlabel-user.service
-ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dpartlabel-system\\x2ddata.service
-ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dpartlabel-rootfs.service
-
 ln -s ../tizen-system-env.service %{buildroot}%{_unitdir}/basic.target.wants/tizen-system-env.service
 
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
@@ -237,11 +233,7 @@ systemctl daemon-reload
 /csa
 %{_prefix}/lib/udev/rules.d/51-system-plugin-spreadtrum.rules
 %{_unitdir}/tizen-system-env.service
-%{_sysconfdir}/fstab_2parts
 %{_unitdir}/basic.target.wants/tizen-system-env.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-user.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dpartlabel-rootfs.service
 %{_unitdir}/csa.mount
 %{_unitdir}/local-fs.target.wants/csa.mount
 %{_unitdir}/graphical.target.wants/tizen-fstrim-user.timer
@@ -249,9 +241,6 @@ systemctl daemon-reload
 %{_unitdir}/tizen-fstrim-user.service
 %{_bindir}/tizen-fstrim-on-charge.sh
 %{_datadir}/fixed_multiuser/fixed-multi-user.sh
-
-%post device-spreadtrum
-mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 
 %files device-n4
 %manifest %{name}.manifest
