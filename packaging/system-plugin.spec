@@ -30,7 +30,6 @@ This package provides Spreadtrum specific system configuration files.
 %package device-n4
 Summary:  Note4 specific system configuration files
 Requires: %{name} = %{version}-%{release}
-Requires: %{name}-exynos = %{version}-%{release}
 BuildArch: noarch
 
 %description device-n4
@@ -47,7 +46,6 @@ This package provides Circle specific system configuration files.
 %package device-u3
 Summary:  U3/XU3 specific system configuration files
 Requires: %{name} = %{version}-%{release}
-Requires: %{name}-exynos = %{version}-%{release}
 BuildArch: noarch
 
 %description device-u3
@@ -80,7 +78,7 @@ Library for lazy mount feature. It supports some interface functions.
 %package feature-lazymount-devel
 Summary: Development library for lazy mount feature
 Requires: vconf
-Requires: feature-lazymount = %{version}
+Requires: %{name}-feature-lazymount = %{version}
 
 %description feature-lazymount-devel
 Development library for lazy mount feature. It supports some interface functions.
@@ -181,7 +179,7 @@ install -m 644 rules/51-system-plugin-spreadtrum.rules %{buildroot}%{_prefix}/li
 mkdir -p %{buildroot}%{_prefix}/lib/udev/hwdb.d/
 install -m 644 rules/60-evdev.hwdb %{buildroot}%{_prefix}/lib/udev/hwdb.d/
 
-# fstab
+# /etc/fstab
 mkdir -p %{buildroot}%{_sysconfdir}
 install -m 644 etc/fstab_3parts %{buildroot}%{_sysconfdir}
 install -m 644 etc/fstab_2parts %{buildroot}%{_sysconfdir}
