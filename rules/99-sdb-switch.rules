@@ -1,2 +1,0 @@
-SUBSYSTEM=="switch", ATTR{name}=="usb_cable", ATTR{state}=="1", RUN+="/usr/bin/sdb-mode.sh --on"
-SUBSYSTEM=="switch", ATTR{name}=="usb_cable", ATTR{state}=="0", RUN+="/usr/bin/sdb-mode.sh --off"

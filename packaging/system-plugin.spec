@@ -202,8 +202,6 @@ install -m 755 scripts/init.wrapper %{buildroot}%{_sbindir}
 # headless
 mkdir -p %{buildroot}%{_sbindir}
 install -m 755 scripts/sdb-mode.sh %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
-install -m 644 rules/99-sdb-switch.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d
 install -m 755 scripts/headless_env.sh %{buildroot}%{_sysconfdir}/profile.d
 
