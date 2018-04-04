@@ -148,22 +148,6 @@ noinst_liblazymount_la_SOURCES = \
 	src/liblazymount/lazy_mount_interface.c
 
 # ------------------------------------------------------------------------------
-bin_PROGRAMS = \
-	test_lazymount
-
-test_lazymount_SOURCES = \
-	src/liblazymount/test_lazymount.c
-
-test_lazymount_CFLAGS = \
-	$(AM_CFLAGS) \
-	-I. -Isrc/liblazymount \
-	$(LIBLAZYMOUNT_PC_CFLAGS)
-
-test_lazymount_LDADD = \
-	-lvconf \
-	-lsystemd \
-	liblazymount.la
-
 systemunit_DATA += \
 	units/lazy_mount.path \
 	units/lazy_mount.service
