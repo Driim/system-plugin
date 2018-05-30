@@ -1,0 +1,85 @@
+#!/bin/sh
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
+SYSTEM_MNT=/opt
+SYS_BLK_DIR=/sys/class/block
+MODULES_MNT=/usr/lib/modules
+
+mount -o nosuid,strictatime,mode=755 -t devtmpfs devtmpfs /dev
+mount -o nosuid,noexec,nodev -t sysfs sysfs /sys
+mount -o nosuid,noexec,nodev -t proc proc /proc
+
+#Find devices with label or partlabel
+ROOTFS=`/sbin/blkid -L rootfs`
+if [ x$ROOTFS = "x" ]
+then
+    ROOTFS=`/sbin/blkid -t PARTLABEL=rootfs -o device`
+fi
+
+MODULES=`/sbin/blkid -L modules`
+if [ x$MODULES = "x" ]
+then
+    MODULES=`/sbin/blkid -t PARTLABEL=module -o device`
+fi
+
+DATAFS=`/sbin/blkid -L system-data`
+if [ x$DATAFS = "x" ]
+then
+    DATAFS=`/sbin/blkid -t PARTLABEL=system-data -o device`
+fi
+
+#Fsck, resize, mount devices
+if [ x$ROOTFS = "x" ]
+then
+    echo "Warning : There is no rootfs partition."
+else
+    /usr/bin/mount -o remount,ro $ROOTFS
+fi
+
+if [ x$MODULES = "x" ]
+then
+    echo "Warning : There is no modules partition."
+else
+    /sbin/resize2fs -f $MODULES
+    /sbin/fsck -y $MODULES
+    /bin/mount $MODULES $MODULES_MNT
+fi
+
+if [ x$DATAFS = "x" ]
+then
+    echo "Warning : There is no system-data partition."
+else
+    /usr/bin/mount | grep "$DATAFS " > /dev/null
+
+    if [ $? = "0" ]
+    then
+        /usr/bin/umount -l "$DATAFS"
+    fi
+    /sbin/fsck -y $DATAFS
+    /sbin/resize2fs -f $DATAFS
+    /usr/bin/mount $DATAFS $SYSTEM_MNT
+fi
+
+mkdir -p /opt/.overlayfs_upper
+mkdir -p /opt/.overlayfs_work
+mount -t overlay overlay -o ro,lowerdir=/,upperdir=/opt/.overlayfs_upper,workdir=/opt/.overlayfs_work /.overlayfs_merged
+mount --make-private /
+mount -M /opt  /.overlayfs_merged/opt
+mount -M /sys  /.overlayfs_merged/sys
+mount -M /proc /.overlayfs_merged/proc
+mount -M /dev  /.overlayfs_merged/dev
+mount -M /usr/lib/modules  /.overlayfs_merged/usr/lib/modules
+/sbin/pivot_root /.overlayfs_merged /.overlayfs_merged/.rootfs_old
+mount --make-shared /
+
+INIT=/usr/lib/systemd/systemd
+if [ $$ = 1 ]; then
+        [ "$INIT" ] && exec "$INIT" "$@"
+fi
+
+echo "======================================================================"
+echo "[/sbin/init] WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+echo "This Message should never be printed. ($INIT execution failure?)"
+echo "======================================================================"
+exec /bin/sh

@@ -67,6 +67,15 @@ BuildArch: noarch
 %description feature-init_wrapper
 This package provides init.wrapper and init symlink file for init wrapper booting.
 
+%package feature-init_wrapper_overlayfs
+Summary: Support init.wrapper and overlayfs booting.
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description feature-init_wrapper_overlayfs
+This package provides init.wrapper and init symlink file for init wrapper booting.
+In addition, overlayfs is mounted upon the rootfs.
+
 %package feature-lazymount
 Summary: Library for lazy mount feature
 Requires(post): /usr/bin/vconftool
@@ -198,6 +207,7 @@ install -m 775 -D scripts/fixed-multi-user.sh %{buildroot}%{_datadir}/fixed_mult
 # init_wrapper
 mkdir -p %{buildroot}%{_sbindir}
 install -m 755 scripts/init.wrapper %{buildroot}%{_sbindir}
+install -m 755 scripts/init.wrapper.overlayfs %{buildroot}%{_sbindir}
 
 # headless
 mkdir -p %{buildroot}%{_sbindir}
@@ -278,6 +288,16 @@ systemctl daemon-reload
 %posttrans feature-init_wrapper
 rm -f /sbin/init
 ln -s /sbin/init.wrapper /sbin/init
+
+%files feature-init_wrapper_overlayfs
+%license LICENSE.Apache-2.0
+%{_sbindir}/init.wrapper.overlayfs
+
+%posttrans feature-init_wrapper_overlayfs
+rm -f /sbin/init
+ln -s /sbin/init.wrapper.overlayfs /sbin/init
+mkdir -p /.overlayfs_merged
+mkdir -p /.rootfs_old
 
 %files feature-lazymount
 %defattr(-,root,root,-)
