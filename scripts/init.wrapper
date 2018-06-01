@@ -41,8 +41,9 @@ else
 fi
 
 if [ x$MODULES = "x" ]
-    echo "Warning : There is no modules partition."
 then
+    echo "Warning : There is no modules partition."
+else
     /sbin/resize2fs -f $MODULES
     /sbin/fsck -y $MODULES
     /bin/mount $MODULES $MODULES_MNT
