@@ -163,6 +163,7 @@ rm -rf %{buildroot}
 %make_install
 
 mkdir -p %{buildroot}%{_unitdir}
+mkdir -p %{buildroot}%{_userunitdir}
 mkdir -p %{buildroot}/csa
 mkdir -p %{buildroot}/initrd
 install -m 644 units/resize2fs@.service %{buildroot}%{_unitdir}
@@ -218,6 +219,21 @@ install -m 755 scripts/headless_env.sh %{buildroot}%{_sysconfdir}/profile.d
 # config-udev-sdbd
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/99-sdb-extcon.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
+
+# /opt/usr lazy mount
+mkdir -p %{buildroot}%{_unitdir}/local-fs.target.wants
+mkdir -p %{buildroot}%{_unitdir}/wait-mount@opt-usr.service.d
+mkdir -p %{buildroot}%{_userunitdir}/basic.target.wants
+mkdir -p %{buildroot}%{_userunitdir}/wait-mount@opt-usr.service.d
+install -m 644 units/opt-usr.mount %{buildroot}%{_unitdir}
+install -m 644 units/opt-usr-fsck.service %{buildroot}%{_unitdir}
+install -m 644 units/wait-mount@.service %{buildroot}%{_unitdir}
+install -m 644 units/wait-mount-session@.service %{buildroot}%{_userunitdir}/wait-mount@.service
+install -m 644 units/no-wait.conf %{buildroot}%{_unitdir}/wait-mount@opt-usr.service.d
+install -m 644 units/no-wait.conf %{buildroot}%{_userunitdir}/wait-mount@opt-usr.service.d
+ln -s ../opt-usr.mount %{buildroot}%{_unitdir}/local-fs.target.wants/opt-usr.mount
+ln -s ../wait-mount@.service %{buildroot}%{_unitdir}/local-fs.target.wants/wait-mount@opt-usr.service
+ln -s ../wait-mount@.service %{buildroot}%{_userunitdir}/basic.target.wants/wait-mount@opt-usr.service
 
 %clean
 rm -rf %{buildroot}
@@ -350,6 +366,12 @@ rm -f %{_sbindir}/e4crypt
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_sysconfdir}/fstab_2parts
+%{_unitdir}/wait-mount@.service
+%{_unitdir}/wait-mount@opt-usr.service.d/no-wait.conf
+%{_unitdir}/local-fs.target.wants/wait-mount@opt-usr.service
+%{_userunitdir}/wait-mount@.service
+%{_userunitdir}/wait-mount@opt-usr.service.d/no-wait.conf
+%{_userunitdir}/basic.target.wants/wait-mount@opt-usr.service
 
 %post config-2parts
 mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
@@ -361,6 +383,10 @@ mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_sysconfdir}/fstab_3parts
+%{_unitdir}/wait-mount@.service
+%{_unitdir}/local-fs.target.wants/wait-mount@opt-usr.service
+%{_userunitdir}/wait-mount@.service
+%{_userunitdir}/basic.target.wants/wait-mount@opt-usr.service
 
 %post config-3parts
 mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
@@ -372,6 +398,12 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_sysconfdir}/fstab_2parts
+%{_unitdir}/opt-usr.mount
+%{_unitdir}/opt-usr-fsck.service
+%{_unitdir}/wait-mount@.service
+%{_unitdir}/local-fs.target.wants/opt-usr.mount
+%{_userunitdir}/wait-mount@.service
+%{_userunitdir}/basic.target.wants/wait-mount@opt-usr.service
 
 %post config-3parts-lzuser
 mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab

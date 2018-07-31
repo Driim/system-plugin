@@ -1,0 +1,15 @@
+[Unit]
+Description=File System Check on /opt/usr
+DefaultDependencies=no
+ConditionPathExists=!/opt/etc/.odeprogress
+BindsTo=dev-disk-by\x2dpartlabel-user.device
+After=dev-disk-by\x2dpartlabel-user.device
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+SmackProcessLabel=System
+ExecStart=/sbin/fsck -T -M -f -y /dev/disk/by-partlabel/user
+SuccessExitStatus=0 1 8
+TimeoutSec=0

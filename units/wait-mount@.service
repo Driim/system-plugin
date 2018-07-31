@@ -1,0 +1,9 @@
+[Unit]
+Description=Wait until %f is mounted
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+SmackProcessLabel=System
+ExecStart=/bin/sh -c 'while ! `mountpoint -q %f`; do sleep 1; done'

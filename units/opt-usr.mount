@@ -1,0 +1,12 @@
+[Unit]
+DefaultDependencies=no
+ConditionPathExists=!/opt/etc/.odeprogress
+Wants=opt-usr-fsck.service wait-mount@opt-usr.service
+After=local-fs-pre.target opt-usr-fsck.service
+Before=local-fs.target wait-mount@opt-usr.service
+
+[Mount]
+What=/dev/disk/by-partlabel/user
+Type=ext4
+Where=/opt/usr
+SmackProcessLabel=System::Privilege
