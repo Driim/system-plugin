@@ -101,6 +101,14 @@ BuildArch: noarch
 %description feature-image-reduction
 This package provides system configuration files for reducing image size.
 
+%package feature-namespace
+Summary:  System configuration files for namespace separation
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description feature-namespace
+This package provides namespace separation of user sessions.
+
 %package config-env-headless
 Summary:  System configuration files for headless images
 Requires: %{name} = %{version}-%{release}
@@ -235,6 +243,10 @@ ln -s ../opt-usr.mount %{buildroot}%{_unitdir}/local-fs.target.wants/opt-usr.mou
 ln -s ../wait-mount@.service %{buildroot}%{_unitdir}/local-fs.target.wants/wait-mount@opt-usr.service
 ln -s ../wait-mount@.service %{buildroot}%{_userunitdir}/basic.target.wants/wait-mount@opt-usr.service
 
+# namespace
+mkdir -p %{buildroot}%{_unitdir}/user@.service.d
+install -m 644 units/namespace.conf %{buildroot}%{_unitdir}/user@.service.d/
+
 %clean
 rm -rf %{buildroot}
 
@@ -348,6 +360,11 @@ rm -f %{_bindir}/dbus-update-activation-environment
 rm -f %{_bindir}/dbus-uuidgen
 # platform/upstream/e2fsprogs
 rm -f %{_sbindir}/e4crypt
+
+%files feature-namespace
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_unitdir}/user@.service.d/namespace.conf
 
 %files config-env-headless
 %manifest %{name}.manifest
