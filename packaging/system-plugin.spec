@@ -96,6 +96,7 @@ Development library for lazy mount feature. It supports some interface functions
 Summary:  System configuration files for reducing image size
 Requires: %{name} = %{version}-%{release}
 Requires: dbus
+Requires: e2fsprogs
 BuildArch: noarch
 
 %description feature-image-reduction
