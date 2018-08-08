@@ -5,5 +5,7 @@ DefaultDependencies=no
 [Service]
 Type=oneshot
 RemainAfterExit=yes
+User=system_fw
+Group=system_fw
 SmackProcessLabel=System
 ExecStart=/bin/sh -c 'while ! `mountpoint -q %f`; do sleep 1; done'
