@@ -1,6 +1,7 @@
 [Unit]
 Description=Wait until %f is mounted
 DefaultDependencies=no
+RequiresMountsFor=/opt
 
 [Service]
 Type=oneshot
