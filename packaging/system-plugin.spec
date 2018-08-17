@@ -1,6 +1,3 @@
-#%define _unpackaged_files_terminate_build 0
-#%define debug_package %{nil}
-
 Name:      system-plugin
 Summary:   Target specific system configuration files
 Version:   0.1
@@ -12,7 +9,9 @@ Source1:   %{name}.manifest
 
 Requires(post): /usr/bin/systemctl
 Requires(post): /usr/bin/udevadm
+BuildRequires: cmake
 BuildRequires: pkgconfig(libsystemd)
+BuildRequires: pkgconfig(libtzplatform-config)
 
 %description
 This package provides target specific system configuration files.
@@ -92,6 +91,13 @@ BuildArch: noarch
 %description feature-namespace
 This package provides namespace separation of user sessions.
 
+%package feature-session-bind
+Summary:  System utils for mounting user session contents
+Requires: %{name} = %{version}-%{release}
+
+%description feature-session-bind
+This package provides a mount utils for user sessions.
+
 %package config-env-headless
 Summary:  System configuration files for headless images
 Requires: %{name} = %{version}-%{release}
@@ -134,12 +140,14 @@ This package provides configuration files for /etc/fstab(remount) and resize2fs@
 
 %prep
 %setup -q
+cp %{SOURCE1} .
 
 %build
-cp %{SOURCE1} .
+%cmake .
 
 %install
 rm -rf %{buildroot}
+%{make_install}
 
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
@@ -217,6 +225,11 @@ ln -s ../wait-mount@.service %{buildroot}%{_userunitdir}/basic.target.wants/wait
 # namespace
 mkdir -p %{buildroot}%{_unitdir}/user@.service.d
 install -m 644 units/namespace.conf %{buildroot}%{_unitdir}/user@.service.d/
+
+# session-bind
+mkdir -p %{buildroot}%{_userunitdir}/basic.target.wants
+install -m 644 units/session-bind.service %{buildroot}%{_userunitdir}
+ln -s ../session-bind.service %{buildroot}%{_userunitdir}/basic.target.wants/session-bind.service
 
 %clean
 rm -rf %{buildroot}
@@ -312,6 +325,23 @@ rm -f %{_sbindir}/e4crypt
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
 %{_unitdir}/user@.service.d/namespace.conf
+
+%files feature-session-bind
+%manifest %{name}.manifest
+%license LICENSE.Apache-2.0
+%{_bindir}/session-bind
+%{_userunitdir}/session-bind.service
+%{_userunitdir}/basic.target.wants/session-bind.service
+
+%post feature-session-bind
+echo ""
+echo "------------------------------------------------------------------------"
+echo "When you install this system-plugin-feature-session-bind rpm separately,"
+echo "you are required to execute this command"
+echo ""
+echo "root#) setcap cap_sys_admin=ei /usr/bin/session-bind"
+echo "------------------------------------------------------------------------"
+echo ""
 
 %files config-env-headless
 %manifest %{name}.manifest
