@@ -9,11 +9,9 @@ Group:     Base/Startup
 License:   Apache-2.0
 Source0:   %{name}-%{version}.tar.bz2
 Source1:   %{name}.manifest
-Source2:   liblazymount.manifest
 
 Requires(post): /usr/bin/systemctl
 Requires(post): /usr/bin/udevadm
-BuildRequires: pkgconfig(vconf)
 BuildRequires: pkgconfig(libsystemd)
 
 %description
@@ -75,22 +73,6 @@ BuildArch: noarch
 %description feature-init_wrapper_overlayfs
 This package provides init.wrapper and init symlink file for init wrapper booting.
 In addition, overlayfs is mounted upon the rootfs.
-
-%package feature-lazymount
-Summary: Library for lazy mount feature
-Requires(post): /usr/bin/vconftool
-Requires: vconf
-
-%description feature-lazymount
-Library for lazy mount feature. It supports some interface functions.
-
-%package feature-lazymount-devel
-Summary: Development library for lazy mount feature
-Requires: vconf
-Requires: %{name}-feature-lazymount = %{version}
-
-%description feature-lazymount-devel
-Development library for lazy mount feature. It supports some interface functions.
 
 %package feature-image-reduction
 Summary:  System configuration files for reducing image size
@@ -155,21 +137,9 @@ This package provides configuration files for /etc/fstab(remount) and resize2fs@
 
 %build
 cp %{SOURCE1} .
-cp %{SOURCE2} .
-
-./autogen.sh
-%reconfigure \
-		--disable-static \
-		--prefix=%{_prefix} \
-		--disable-debug-mode \
-		--disable-eng-mode
-
-%__make %{?jobs:-j%jobs} \
-	CFLAGS+=-DLIBDIR=\\\"%{_libdir}\\\"
 
 %install
 rm -rf %{buildroot}
-%make_install
 
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
@@ -327,30 +297,6 @@ rm -f /sbin/init
 ln -s /sbin/init.wrapper.overlayfs /sbin/init
 mkdir -p /.overlayfs_merged
 mkdir -p /.rootfs_old
-
-%files feature-lazymount
-%defattr(-,root,root,-)
-%manifest liblazymount.manifest
-%license LICENSE.Apache-2.0
-%{_libdir}/liblazymount.so.*
-%{_unitdir}/basic.target.wants/lazy_mount.path
-%{_unitdir}/lazy_mount.path
-%{_unitdir}/lazy_mount.service
-%{_bindir}/mount-user.sh
-
-%post feature-lazymount
-/sbin/ldconfig
-systemctl daemon-reload
-
-%postun feature-lazymount -p /sbin/ldconfig
-
-%files feature-lazymount-devel
-%defattr(-,root,root,-)
-%manifest liblazymount.manifest
-%license LICENSE.Apache-2.0
-%{_libdir}/liblazymount.so
-%{_includedir}/lazymount/lazy_mount.h
-%{_libdir}/pkgconfig/liblazymount.pc
 
 %posttrans feature-image-reduction
 # platform/upstream/dbus

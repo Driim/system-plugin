@@ -1,8 +1,0 @@
-[Unit]
-Description=Mount /opt/usr
-
-[Service]
-Type=oneshot
-SmackProcessLabel=System::Privileged
-ExecStart=/usr/bin/mount-user.sh
-SuccessExitStatus=0
