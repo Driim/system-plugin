@@ -1,11 +1,10 @@
 #!/bin/sh
-
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
 SYSTEM_MNT=/opt
 SYS_BLK_DIR=/sys/class/block
 MODULES_MNT=/usr/lib/modules
 
+mkdir -p /dev /sys /proc
 mount -o nosuid,strictatime,mode=755 -t devtmpfs devtmpfs /dev
 mount -o nosuid,noexec,nodev -t sysfs sysfs /sys
 mount -o nosuid,noexec,nodev -t proc proc /proc
