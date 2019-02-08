@@ -120,7 +120,7 @@ Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
 %description config-2parts
-This package provides configuration files for /etc/fstab(remount) and resize2fs@.service.
+This package provides configuration files for /etc/fstab(remount)
 
 %package config-3parts
 Summary: System configuration files for storage partitions
@@ -128,7 +128,7 @@ Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
 %description config-3parts
-This package provides configuration files for /etc/fstab(remount) and resize2fs@.service.
+This package provides configuration files for /etc/fstab(remount)
 
 %package config-3parts-lzuser
 Summary: System configuration files for storage partitions
@@ -136,7 +136,7 @@ Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
 %description config-3parts-lzuser
-This package provides configuration files for /etc/fstab(remount) and resize2fs@.service.
+This package provides configuration files for /etc/fstab(remount)
 
 %prep
 %setup -q
@@ -153,7 +153,6 @@ mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
 mkdir -p %{buildroot}/csa
 mkdir -p %{buildroot}/initrd
-install -m 644 units/resize2fs@.service %{buildroot}%{_unitdir}
 install -m 644 units/tizen-system-env.service %{buildroot}%{_unitdir}
 
 # csa mount
@@ -161,14 +160,11 @@ install -m 644 units/csa.mount %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_unitdir}/local-fs.target.wants
 ln -s ../csa.mount %{buildroot}%{_unitdir}/local-fs.target.wants/csa.mount
 
-# Resize partition for 3-parted target
+# tizen-system-env.service
 mkdir -p %{buildroot}%{_unitdir}/basic.target.wants
-ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dlabel-system\\x2ddata.service
-ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dlabel-user.service
-ln -s ../resize2fs@.service %{buildroot}%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\\x2dlabel-rootfs.service
-
 ln -s ../tizen-system-env.service %{buildroot}%{_unitdir}/basic.target.wants/tizen-system-env.service
 
+#udev rules
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/51-system-plugin-exynos.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/51-system-plugin-spreadtrum.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
@@ -240,7 +236,6 @@ systemctl daemon-reload
 %files
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
-%{_unitdir}/resize2fs@.service
 %{_unitdir}/tizen-system-env.service
 %{_unitdir}/basic.target.wants/tizen-system-env.service
 
@@ -357,8 +352,6 @@ echo ""
 %files config-2parts
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
 %{_sysconfdir}/fstab_2parts
 %{_unitdir}/wait-mount@.service
 %{_unitdir}/wait-mount@opt-usr.service.d/no-wait.conf
@@ -373,9 +366,6 @@ mv %{_sysconfdir}/fstab_2parts %{_sysconfdir}/fstab
 %files config-3parts
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_sysconfdir}/fstab_3parts
 %{_unitdir}/wait-mount@.service
 %{_unitdir}/local-fs.target.wants/wait-mount@opt-usr.service
@@ -388,9 +378,6 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 %files config-3parts-lzuser
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-rootfs.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-system\x2ddata.service
-%{_unitdir}/basic.target.wants/resize2fs@dev-disk-by\x2dlabel-user.service
 %{_sysconfdir}/fstab_2parts
 %{_unitdir}/opt-usr.mount
 %{_unitdir}/opt-usr-fsck.service
