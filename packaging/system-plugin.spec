@@ -209,7 +209,6 @@ mkdir -p %{buildroot}%{_unitdir}/wait-mount@opt-usr.service.d
 mkdir -p %{buildroot}%{_userunitdir}/basic.target.wants
 mkdir -p %{buildroot}%{_userunitdir}/wait-mount@opt-usr.service.d
 install -m 644 units/opt-usr.mount %{buildroot}%{_unitdir}
-install -m 644 units/opt-usr-fsck.service %{buildroot}%{_unitdir}
 install -m 644 units/wait-mount@.service %{buildroot}%{_unitdir}
 install -m 644 units/wait-mount-session@.service %{buildroot}%{_userunitdir}/wait-mount@.service
 install -m 644 units/no-wait.conf %{buildroot}%{_unitdir}/wait-mount@opt-usr.service.d
@@ -380,7 +379,6 @@ mv %{_sysconfdir}/fstab_3parts %{_sysconfdir}/fstab
 %license LICENSE.Apache-2.0
 %{_sysconfdir}/fstab_2parts
 %{_unitdir}/opt-usr.mount
-%{_unitdir}/opt-usr-fsck.service
 %{_unitdir}/wait-mount@.service
 %{_unitdir}/local-fs.target.wants/opt-usr.mount
 %{_userunitdir}/wait-mount@.service

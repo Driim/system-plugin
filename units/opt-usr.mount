@@ -1,8 +1,8 @@
 [Unit]
 DefaultDependencies=no
 ConditionPathExists=!/opt/etc/.odeprogress
-Wants=opt-usr-fsck.service wait-mount@opt-usr.service
-After=local-fs-pre.target opt-usr-fsck.service
+Wants=wait-mount@opt-usr.service
+After=local-fs-pre.target
 Before=local-fs.target wait-mount@opt-usr.service
 
 [Mount]
