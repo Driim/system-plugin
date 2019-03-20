@@ -199,6 +199,10 @@ install -m 755 scripts/sdb-mode.sh %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d
 install -m 755 scripts/headless_env.sh %{buildroot}%{_sysconfdir}/profile.d
 
+# config-2parts
+mkdir -p %{buildroot}%{_sysconfdir}/profile.d
+install -m 755 scripts/2parts_env.sh %{buildroot}%{_sysconfdir}/profile.d
+
 # config-udev-sdbd
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/99-sdb-extcon.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
@@ -352,6 +356,7 @@ echo ""
 %manifest %{name}.manifest
 %license LICENSE.Apache-2.0
 %{_sysconfdir}/fstab_2parts
+%{_sysconfdir}/profile.d/2parts_env.sh
 %{_unitdir}/wait-mount@.service
 %{_unitdir}/wait-mount@opt-usr.service.d/no-wait.conf
 %{_unitdir}/local-fs.target.wants/wait-mount@opt-usr.service
