@@ -231,6 +231,10 @@ mkdir -p %{buildroot}%{_userunitdir}/basic.target.wants
 install -m 644 units/session-bind.service %{buildroot}%{_userunitdir}
 ln -s ../session-bind.service %{buildroot}%{_userunitdir}/basic.target.wants/session-bind.service
 
+mkdir -p %{buildroot}%{_unitdir}/user-basic@.target.wants
+install -m 644 units/session-bind@.service %{buildroot}%{_unitdir}
+ln -s ../session-bind@.service %{buildroot}%{_unitdir}/user-basic@.target.wants/session-bind@.service
+
 %clean
 rm -rf %{buildroot}
 
@@ -332,6 +336,8 @@ rm -f %{_sbindir}/e4crypt
 %{_bindir}/session-bind
 %{_userunitdir}/session-bind.service
 %{_userunitdir}/basic.target.wants/session-bind.service
+%{_unitdir}/session-bind@.service
+%{_unitdir}/user-basic@.target.wants/session-bind@.service
 
 %post feature-session-bind
 echo ""

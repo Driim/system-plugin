@@ -1,0 +1,16 @@
+[Unit]
+PartOf=userlogin@%i.target
+Description=User session bind mount for %i
+Wants=wait-mount@opt-usr.service
+After=wait-mount@opt-usr.service
+ConditionPathIsMountPoint=!/opt/usr/apps
+ConditionPathIsMountPoint=!/opt/usr/media
+
+[Service]
+User=%i
+SmackProcessLabel=User
+Capabilities=cap_sys_admin=i
+SecureBits=keep-caps
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/session-bind
