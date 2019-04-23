@@ -168,6 +168,7 @@ ln -s ../tizen-system-env.service %{buildroot}%{_unitdir}/basic.target.wants/tiz
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/51-system-plugin-exynos.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 install -m 644 rules/51-system-plugin-spreadtrum.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
+install -m 644 rules/61-system-plugin-n4.rules %{buildroot}%{_prefix}/lib/udev/rules.d/
 
 mkdir -p %{buildroot}%{_prefix}/lib/udev/hwdb.d/
 install -m 644 rules/60-evdev.hwdb %{buildroot}%{_prefix}/lib/udev/hwdb.d/
@@ -265,6 +266,7 @@ systemctl daemon-reload
 %{_unitdir}/tizen-fstrim-user.timer
 %{_unitdir}/tizen-fstrim-user.service
 %{_bindir}/tizen-fstrim-on-charge.sh
+%{_prefix}/lib/udev/rules.d/61-system-plugin-n4.rules
 
 %files device-circle
 %manifest %{name}.manifest
