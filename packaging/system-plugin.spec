@@ -64,6 +64,14 @@ BuildArch: noarch
 %description feature-init_wrapper
 This package provides init.wrapper and init symlink file for init wrapper booting.
 
+%package init_wrapper_pico
+Summary: Support init.wrapper booting.
+Requires: %{name} = %{version}-%{release}
+BuildArch: noarch
+
+%description init_wrapper_pico
+This package provides init.wrapper and init symlink file for init wrapper booting.
+
 %package feature-init_wrapper_overlayfs
 Summary: Support init.wrapper and overlayfs booting.
 Requires: %{name} = %{version}-%{release}
@@ -194,6 +202,10 @@ mkdir -p %{buildroot}%{_sbindir}
 install -m 755 scripts/init.wrapper %{buildroot}%{_sbindir}
 install -m 755 scripts/init.wrapper.overlayfs %{buildroot}%{_sbindir}
 
+# init_wrapper_pico
+mkdir -p %{buildroot}%{_sbindir}
+install -m 755 scripts/pico/init.wrapper %{buildroot}%{_sbindir}
+
 # headless
 mkdir -p %{buildroot}%{_sbindir}
 install -m 755 scripts/sdb-mode.sh %{buildroot}%{_bindir}
@@ -314,6 +326,14 @@ rm -f /sbin/init
 ln -s /sbin/init.wrapper.overlayfs /sbin/init
 mkdir -p /.overlayfs_merged
 mkdir -p /.rootfs_old
+
+%files init_wrapper_pico
+%license LICENSE.Apache-2.0
+%{_sbindir}/init.wrapper
+
+%posttrans init_wrapper_pico
+rm -f /sbin/init
+ln -s /sbin/init.wrapper /sbin/init
 
 %posttrans feature-image-reduction
 # platform/upstream/dbus
